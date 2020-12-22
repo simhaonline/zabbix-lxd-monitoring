@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2020-12-22T09:41:19Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template LXD</template>
+            <name>Template LXD</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>LXD</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Running containers</name>
+                    <key>lxd.discovery</key>
+                    <delay>15</delay>
+                    <lifetime>10d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>CPU usage {#HCONTAINERID} %</name>
+                            <key>lxd.getinfo[{#HCONTAINERID},cpu_usage]</key>
+                            <delay>30</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>LXD</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <params/>
+                                </step>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>100</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Container {#HCONTAINERID} is running</name>
+                            <key>lxd.getinfo[{#HCONTAINERID},up]</key>
+                            <delay>30</delay>
+                            <description>Check if container is running:&#13;
+1-is running&#13;
+0-is not running</description>
+                            <applications>
+                                <application>
+                                    <name>LXD</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Service state</name>
+                            </valuemap>
+                            <preprocessing>
+                                <step>
+                                    <type>BOOL_TO_DECIMAL</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Used memory {#HCONTAINERID}</name>
+                            <key>lxd.getinfo[{#HCONTAINERID},used_memory]</key>
+                            <delay>30</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>LXD</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Used swap {#HCONTAINERID}</name>
+                            <key>lxd.getinfo[{#HCONTAINERID},used_swap]</key>
+                            <delay>30</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>LXD</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>CPU utilization of {#HCONTAINERID} container</name>
+                            <type>STACKED</type>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <graph_items>
+                                <graph_item>
+                                    <color>990000</color>
+                                    <item>
+                                        <host>Template LXD</host>
+                                        <key>lxd.getinfo[{#HCONTAINERID},cpu_usage]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                        <graph_prototype>
+                            <name>Memory usage of {#HCONTAINERID} container</name>
+                            <type>STACKED</type>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <graph_items>
+                                <graph_item>
+                                    <color>00C800</color>
+                                    <item>
+                                        <host>Template LXD</host>
+                                        <key>lxd.getinfo[{#HCONTAINERID},used_memory]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>EE0000</color>
+                                    <item>
+                                        <host>Template LXD</host>
+                                        <key>lxd.getinfo[{#HCONTAINERID},used_swap]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>Service state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Down</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Up</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
